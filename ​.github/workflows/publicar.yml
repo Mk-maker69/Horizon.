@@ -1,6 +1,5 @@
 name: Publicar Horizon
 
-# Roda sozinho: (1) quando voce sobe arquivos, (2) a cada ~20 min para renovar as noticias.
 on:
   push:
     branches: [main]
@@ -30,8 +29,14 @@ jobs:
           node-version: 20
       - name: Montar o site
         run: |
-          mkdir _site
-          cp -r index.html build-bundle.js app downloads vendor _site/
+          mkdir -p _site/app _site/downloads _site/vendor scripts
+          cp index.html build-bundle.js _site/
+          if [ -f app/bundle.json ]; then cp app/bundle.json _site/app/; else cp bundle.json _site/app/; fi
+          if [ -f downloads/launcher.zip ]; then cp downloads/launcher.zip _site/downloads/; else cp launcher.zip _site/downloads/; fi
+          if [ -f downloads/Horizon.apk ]; then cp downloads/Horizon.apk _site/downloads/; else cp Horizon.apk _site/downloads/; fi
+          if [ -f vendor/jszip.min.js ]; then cp vendor/jszip.min.js _site/vendor/; else cp jszip.min.js _site/vendor/; fi
+          [ -f scripts/fetch-news.mjs ] || cp fetch-news.mjs scripts/
+          [ -f scripts/news-lib.mjs ] || cp news-lib.mjs scripts/
           node scripts/fetch-news.mjs _site/news.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
