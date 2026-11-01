@@ -1,0 +1,9 @@
+MONTAR O SITE (uma vez, ~5 min)
+1. Crie conta em github.com (gratis). Clique em New repository: nome "horizon", marque Public, Create.
+2. Na pagina do repositorio: "uploading an existing file" e arraste TODO o conteudo desta pasta
+   (inclusive a pasta .github, se o seu sistema esconder, ative "mostrar arquivos ocultos"). Commit changes.
+3. Settings > Pages > Source: GitHub Actions.
+4. Aba Actions > "Publicar Horizon" > Run workflow (a primeira vez). Em ~1 min o site fica em
+   https://SEUUSUARIO.github.io/horizon/
+5. Abra esse endereco: o painel mostra o que digitar na TV (Config. > Atualizacao > Endereco do site).
+Para publicar versoes novas: no painel, solte o zip e clique Publicar (precisa da chave, o painel explica).

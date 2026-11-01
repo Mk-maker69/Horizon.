@@ -1,0 +1,22 @@
+{
+  "_comentario": "Fontes das noticias. 'cat' = categoria na TV (Brasil, Mundo, Esportes, Tecnologia, Economia, Entretenimento). 'max' = quantas materias pegar. 'backup' = so usa se a categoria ficar com poucas materias. Para trocar de jornal, e so mudar o 'url' (qualquer feed RSS/Atom).",
+  "total": 48,
+  "feeds": [
+    { "cat": "Brasil",         "src": "G1",            "url": "https://g1.globo.com/rss/g1/",                         "max": 10 },
+    { "cat": "Brasil",         "src": "CNN Brasil",    "url": "https://www.cnnbrasil.com.br/feed/",                   "max": 6 },
+    { "cat": "Brasil",         "src": "Folha",         "url": "https://feeds.folha.uol.com.br/emcimadahora/rss091.xml", "max": 6 },
+    { "cat": "Mundo",          "src": "G1 Mundo",      "url": "https://g1.globo.com/rss/g1/mundo/",                   "max": 8 },
+    { "cat": "Esportes",       "src": "ge",            "url": "https://ge.globo.com/rss/ge/",                         "max": 10 },
+    { "cat": "Tecnologia",     "src": "Tecnoblog",     "url": "https://tecnoblog.net/feed/",                          "max": 8 },
+    { "cat": "Tecnologia",     "src": "Olhar Digital", "url": "https://olhardigital.com.br/feed/",                    "max": 6 },
+    { "cat": "Economia",       "src": "G1 Economia",   "url": "https://g1.globo.com/rss/g1/economia/",                "max": 8 },
+    { "cat": "Entretenimento", "src": "G1 Pop & Arte", "url": "https://g1.globo.com/rss/g1/pop-arte/",                "max": 8 },
+
+    { "cat": "Brasil",         "url": "https://news.google.com/rss?hl=pt-BR&gl=BR&ceid=BR:pt-419",                                    "max": 8, "backup": true, "gnews": true },
+    { "cat": "Mundo",          "url": "https://news.google.com/rss/headlines/section/topic/WORLD?hl=pt-BR&gl=BR&ceid=BR:pt-419",         "max": 8, "backup": true, "gnews": true },
+    { "cat": "Esportes",       "url": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=pt-BR&gl=BR&ceid=BR:pt-419",        "max": 8, "backup": true, "gnews": true },
+    { "cat": "Tecnologia",     "url": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=pt-BR&gl=BR&ceid=BR:pt-419",    "max": 8, "backup": true, "gnews": true },
+    { "cat": "Economia",       "url": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=pt-BR&gl=BR&ceid=BR:pt-419",      "max": 8, "backup": true, "gnews": true },
+    { "cat": "Entretenimento", "url": "https://news.google.com/rss/headlines/section/topic/ENTERTAINMENT?hl=pt-BR&gl=BR&ceid=BR:pt-419", "max": 8, "backup": true, "gnews": true }
+  ]
+}

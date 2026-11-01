@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horizon TV · Painel</title>
+<style>
+  :root { --bg:#0b1020; --card:#141b30; --line:#252f4d; --tx:#eef1fb; --mut:#98a3c4; --ac:#6aa8ff; --ok:#34c759; --warn:#ffb000; --bad:#ff5468; }
+  @media (prefers-color-scheme: light) { :root { --bg:#f2f4fb; --card:#fff; --line:#dde2f0; --tx:#141a2e; --mut:#5d6788; --ac:#2f6bff; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--tx); font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  main { max-width:960px; margin:0 auto; padding:28px 16px 80px; }
+  h1 { font-size:28px; margin:0 0 4px; letter-spacing:-.01em; }
+  h1 span { color:var(--ac); }
+  .sub { color:var(--mut); margin:0 0 24px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:760px) { .grid { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px; }
+  .card.wide { grid-column:1/-1; }
+  h2 { font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--mut); margin:0 0 12px; }
+  .big { font-size:34px; font-weight:800; letter-spacing:-.02em; }
+  .row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .pill { display:inline-block; padding:3px 10px; border-radius:99px; font-size:13px; font-weight:600; background:rgba(106,168,255,.15); color:var(--ac); }
+  .pill.ok { background:rgba(52,199,89,.15); color:var(--ok); } .pill.warn { background:rgba(255,176,0,.16); color:var(--warn); } .pill.bad { background:rgba(255,84,104,.15); color:var(--bad); }
+  .code { font:700 30px ui-monospace,Menlo,Consolas,monospace; padding:10px 16px; border-radius:12px; background:rgba(106,168,255,.12); border:1px dashed var(--ac); display:inline-block; word-break:break-all; }
+  button, .btn { appearance:none; border:0; border-radius:12px; padding:11px 18px; font:600 15px inherit; font-family:inherit; cursor:pointer; background:var(--ac); color:#fff; text-decoration:none; display:inline-block; }
+  button.ghost, .btn.ghost { background:transparent; color:var(--ac); border:1px solid var(--line); }
+  button:disabled { opacity:.45; cursor:default; }
+  input[type=password], input[type=text] { width:100%; padding:11px 14px; border-radius:12px; border:1px solid var(--line); background:transparent; color:var(--tx); font:15px ui-monospace,Menlo,Consolas,monospace; }
+  .drop { border:2px dashed var(--line); border-radius:16px; padding:28px 16px; text-align:center; color:var(--mut); cursor:pointer; transition:.15s; }
+  .drop.over, .drop:hover { border-color:var(--ac); color:var(--tx); background:rgba(106,168,255,.07); }
+  .drop b { color:var(--tx); }
+  ol { padding-left:20px; margin:8px 0; } li { margin:4px 0; }
+  .news { display:flex; gap:12px; align-items:center; padding:8px 0; border-top:1px solid var(--line); }
+  .news:first-of-type { border-top:0; }
+  .news i { flex:none; width:64px; height:44px; border-radius:8px; background:#2a3558 center/cover; }
+  .news div { min-width:0; } .news b { display:block; font-size:14px; line-height:1.25; } .news small { color:var(--mut); }
+  #log { font:13px/1.55 ui-monospace,Menlo,Consolas,monospace; white-space:pre-wrap; color:var(--mut); margin-top:12px; }
+  #log .ok { color:var(--ok); } #log .bad { color:var(--bad); }
+  details { margin-top:10px; } summary { cursor:pointer; color:var(--ac); }
+  .mut { color:var(--mut); } small.mut { font-size:13px; }
+  label { display:block; font-size:13px; color:var(--mut); margin:12px 0 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Horizon <span>TV</span> · Painel</h1>
+  <p class="sub">Atualize o launcher da TV LG e do Android TV por aqui, sem reinstalar nada.</p>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Versão no ar</h2>
+      <div class="big" id="ver">…</div>
+      <div class="mut" id="verInfo">verificando</div>
+      <p class="mut" style="margin:12px 0 0;font-size:14px">A TV confere essa versão toda vez que abre. Se for maior que a dela, baixa, reabre e pronto.</p>
+    </section>
+
+    <section class="card">
+      <h2>Na TV, em Config. › Atualização › Endereço do site, digite</h2>
+      <div class="code" id="addr">…</div>
+      <div class="row" style="margin-top:12px"><button class="ghost" id="copy">Copiar</button><span class="mut" id="copied"></span></div>
+      <p class="mut" style="margin:12px 0 0;font-size:14px">Só uma vez por aparelho (TV LG e Android TV).</p>
+    </section>
+
+    <section class="card wide">
+      <h2>Publicar nova versão</h2>
+      <div class="drop" id="drop"><b>Solte aqui o .zip do launcher</b><br>ou toque para escolher<input type="file" id="file" accept=".zip" hidden></div>
+      <div id="picked" class="mut" style="margin-top:10px"></div>
+
+      <label for="tok">Chave de acesso do GitHub (fica só neste navegador)</label>
+      <input type="password" id="tok" placeholder="github_pat_…" autocomplete="off">
+      <details>
+        <summary>Como criar a chave (1 minuto, uma vez só)</summary>
+        <ol>
+          <li>Abra <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>
+          <li>Nome: <b>horizon</b> · Validade: a maior possível</li>
+          <li>Em <b>Repository access</b>: <i>Only select repositories</i> › escolha este repositório</li>
+          <li>Em <b>Permissions › Repository permissions › Contents</b>: <i>Read and write</i></li>
+          <li>Gerar e colar acima.</li>
+        </ol>
+      </details>
+      <div id="repoBox" hidden>
+        <label for="repo">Repositório (usuario/nome)</label>
+        <input type="text" id="repo" placeholder="usuario/horizon">
+      </div>
+      <div class="row" style="margin-top:16px">
+        <button id="pub" disabled>Publicar</button>
+        <button class="ghost" id="dl" disabled>Só baixar o pacote de atualização</button>
+      </div>
+      <div id="log"></div>
+    </section>
+
+    <section class="card">
+      <h2>Notícias</h2>
+      <div class="row"><span class="pill" id="nPill">…</span><span class="mut" id="nInfo"></span></div>
+      <div id="nList" style="margin-top:10px"></div>
+      <p class="mut" style="margin:10px 0 0;font-size:14px">Renovadas sozinhas a cada ~20 min pelo GitHub. Para trocar de jornal, edite <b>feeds.json</b>.</p>
+    </section>
+
+    <section class="card">
+      <h2>Downloads</h2>
+      <p style="margin:0 0 10px"><a class="btn" href="downloads/Horizon.apk" download>Android TV · Horizon.apk</a></p>
+      <p style="margin:0 0 10px"><a class="btn ghost" href="downloads/launcher.zip" download>TV LG · pacote (launcher + atualizar.bat)</a></p>
+      <p class="mut" style="margin:0;font-size:14px">O APK e o pacote da LG só precisam ser instalados <b>uma vez</b>. Depois, tudo chega pelo botão “Publicar”.</p>
+    </section>
+  </div>
+</main>
+
+<script src="vendor/jszip.min.js"></script>
+<script src="build-bundle.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var host = location.hostname, parts = location.pathname.split("/").filter(Boolean);
+  var onPages = /\.github\.io$/.test(host);
+  var repoGuess = onPages ? host.split(".")[0] + "/" + (parts[0] || host.split(".")[0] + ".github.io") : "";
+  var picked = null, pickedBytes = null;
+  function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k) || ""; localStorage.setItem(k, v); } catch (e) { return ""; } }
+
+  // ---- endereco para digitar na TV ----
+  var repo = ls("hz_repo") || repoGuess;
+  if (!onPages) $("repoBox").hidden = false;
+  $("repo").value = repo;
+  function shownAddr() {
+    var r = ($("repo").value || repo || "").trim();
+    if (!r) return "usuario/horizon";
+    var p = r.split("/");
+    return p[1] === "horizon" ? p[0] : r;       // "usuario" basta quando o repositorio se chama horizon
+  }
+  function paintAddr() { $("addr").textContent = shownAddr(); }
+  paintAddr();
+  $("repo").addEventListener("input", function () { ls("hz_repo", $("repo").value.trim()); paintAddr(); refreshBtns(); });
+  $("copy").onclick = function () { try { navigator.clipboard.writeText($("addr").textContent); $("copied").textContent = "copiado"; } catch (e) { $("copied").textContent = "selecione e copie"; } };
+
+  // ---- estado publicado ----
+  function loadState() {
+    fetch("app/bundle.json?t=" + Date.now()).then(function (r) { return r.json(); }).then(function (b) {
+      $("ver").textContent = b.version;
+      $("verInfo").textContent = "publicada em " + new Date(b.build).toLocaleString("pt-BR");
+    }).catch(function () { $("ver").textContent = "—"; $("verInfo").textContent = "ainda não publicada: use “Publicar” abaixo"; });
+    fetch("news.json?t=" + Date.now()).then(function (r) { return r.json(); }).then(function (j) {
+      var n = (j.items || []);
+      $("nPill").textContent = n.length + " matérias"; $("nPill").className = "pill " + (n.length ? "ok" : "warn");
+      $("nInfo").textContent = n.length ? "atualizado " + new Date(j.updated).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "feeds sem resposta; a TV usa a fonte reserva";
+      $("nList").innerHTML = "";
+      n.slice(0, 4).forEach(function (x) {
+        var d = document.createElement("div"); d.className = "news";
+        d.innerHTML = "<i></i><div><b></b><small></small></div>";
+        if (x.img) d.firstChild.style.backgroundImage = 'url("' + x.img.replace(/"/g, "%22") + '")';
+        d.querySelector("b").textContent = x.t; d.querySelector("small").textContent = x.cat + " · " + x.src;
+        $("nList").appendChild(d);
+      });
+    }).catch(function () { $("nPill").textContent = "ainda sem notícias"; $("nPill").className = "pill warn"; $("nInfo").textContent = "aguarde a 1ª publicação do GitHub"; });
+  }
+  loadState();
+
+  // ---- escolher arquivo ----
+  var drop = $("drop");
+  drop.onclick = function () { $("file").click(); };
+  ["dragenter", "dragover"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); }); });
+  ["dragleave", "drop"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); }); });
+  drop.addEventListener("drop", function (e) { if (e.dataTransfer.files[0]) pick(e.dataTransfer.files[0]); });
+  $("file").onchange = function () { if (this.files[0]) pick(this.files[0]); };
+  $("tok").value = ls("hz_tok");
+  $("tok").addEventListener("input", function () { ls("hz_tok", this.value.trim()); refreshBtns(); });
+  function refreshBtns() {
+    $("pub").disabled = !(picked && ls("hz_tok") && ($("repo").value || repoGuess).indexOf("/") > 0);
+    $("dl").disabled = !picked;
+  }
+  function log(t, cls) { var s = document.createElement("div"); if (cls) s.className = cls; s.textContent = t; $("log").appendChild(s); }
+
+  function readZip(file) {
+    return file.arrayBuffer().then(function (buf) {
+      pickedBytes = new Uint8Array(buf);
+      return JSZip.loadAsync(buf);
+    }).then(function (zip) {
+      var names = Object.keys(zip.files), base = null;
+      names.forEach(function (n) { if (/(^|\/)appinfo\.json$/.test(n) && zip.file(n.replace(/appinfo\.json$/, "app.js"))) base = n.replace(/appinfo\.json$/, ""); });
+      if (base === null) throw new Error("não achei a pasta do launcher (appinfo.json + app.js) dentro do zip");
+      function txt(n) { var f = zip.file(base + n); if (!f) throw new Error("falta " + n + " no zip"); return f.async("string"); }
+      return Promise.all([txt("index.html"), txt("style.css"), txt("app.js"), txt("appinfo.json")]);
+    }).then(function (a) { return buildBundle({ html: a[0], css: a[1], js: a[2], appinfo: a[3] }); });
+  }
+  function pick(file) {
+    picked = null; $("picked").textContent = "lendo " + file.name + "…"; refreshBtns();
+    readZip(file).then(function (b) {
+      picked = b; $("picked").innerHTML = "✔ <b>" + file.name + "</b> · versão <b>" + b.version + "</b> · " + Math.round((b.js.length + b.css.length + b.body.length) / 1024) + " KB";
+      refreshBtns();
+    }).catch(function (e) { $("picked").innerHTML = '<span style="color:var(--bad)">✖ ' + e.message + "</span>"; });
+  }
+
+  // ---- baixar so o bundle ----
+  $("dl").onclick = function () {
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(picked)], { type: "application/json" }));
+    a.download = "bundle.json"; a.click();
+    log("Baixado bundle.json. No GitHub: pasta app/ › Add file › Upload files.");
+  };
+
+  // ---- publicar pelo GitHub ----
+  function b64(bytes) { var s = "", i, n = 0x8000; for (i = 0; i < bytes.length; i += n) s += String.fromCharCode.apply(null, bytes.subarray(i, i + n)); return btoa(s); }
+  function gh(path, opt) {
+    opt = opt || {};
+    return fetch("https://api.github.com" + path, {
+      method: opt.method || "GET",
+      headers: { Accept: "application/vnd.github+json", Authorization: "Bearer " + ls("hz_tok"), "X-GitHub-Api-Version": "2022-11-28" },
+      body: opt.body ? JSON.stringify(opt.body) : undefined
+    }).then(function (r) {
+      return r.text().then(function (t) { var j = {}; try { j = JSON.parse(t); } catch (e) {} if (!r.ok && !(opt.allow && opt.allow.indexOf(r.status) >= 0)) { var e = new Error(r.status === 401 ? "chave recusada (401): confira a chave" : r.status === 404 ? "repositório ou permissão não encontrada (404)" : (j.message || "erro " + r.status)); e.status = r.status; throw e; } return { status: r.status, json: j }; });
+    });
+  }
+  function putFile(r, branch, path, bytes, msg) {
+    return gh("/repos/" + r + "/contents/" + path + "?ref=" + encodeURIComponent(branch), { allow: [404] }).then(function (cur) {
+      var body = { message: msg, content: b64(bytes), branch: branch };
+      if (cur.status === 200 && cur.json.sha) body.sha = cur.json.sha;
+      return gh("/repos/" + r + "/contents/" + path, { method: "PUT", body: body });
+    });
+  }
+  $("pub").onclick = function () {
+    var r = ($("repo").value || repoGuess).trim(), btn = this;
+    btn.disabled = true; $("log").innerHTML = "";
+    var bundleBytes = new TextEncoder().encode(JSON.stringify(picked));
+    var ver = picked.version, branch;
+    log("Conectando ao GitHub…");
+    gh("/repos/" + r).then(function (info) {
+      branch = info.json.default_branch || "main";
+      log("Enviando versão " + ver + "…");
+      return putFile(r, branch, "app/bundle.json", bundleBytes, "Horizon " + ver);
+    }).then(function () {
+      log("Enviando pacote para download…");
+      return putFile(r, branch, "downloads/launcher.zip", pickedBytes, "Pacote LG " + ver);
+    }).then(function () {
+      log("✔ Enviado! O GitHub leva ~1 minuto para colocar no ar.", "ok");
+      log("Esperando ficar no ar…");
+      var tries = 0;
+      (function poll() {
+        fetch("app/bundle.json?t=" + Date.now()).then(function (x) { return x.json(); }).then(function (b) {
+          if (b.version === ver) { log("✔ Versão " + ver + " no ar. A TV atualiza na próxima vez que abrir o launcher.", "ok"); loadState(); btn.disabled = false; }
+          else again();
+        }).catch(again);
+        function again() { if (++tries > 30) { log("Ainda não apareceu. Veja a aba Actions do repositório.", "bad"); btn.disabled = false; } else setTimeout(poll, 8000); }
+      })();
+    }).catch(function (e) { log("✖ " + e.message, "bad"); btn.disabled = false; });
+  };
+  refreshBtns();
+})();
+</script>
+</body>
+</html>
